@@ -1,6 +1,6 @@
-#Appserv Tools
+# Appserv Tools
 
-##Intro
+## Intro
 Appserv Tools is a bunch of commands to automate all of the general laravel app
 setup stuff. This tool can:
 1. Create your app's directory
@@ -12,12 +12,12 @@ setup stuff. This tool can:
 7. Setup MySQL credentials for you (create the db, user, etc.)
 8. Secure the site
 
-##TODO
+## TODO
 * "guide" mode
 * "help" updates
 * readme updates
 * general cleanup and refactoring
 * normalize name ("Appserv", "App Server Tools", "Appserv Tools")
 
-##Commands
+## Commands
 --todo--
