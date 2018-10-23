@@ -98,9 +98,9 @@ class EchoEnvoyer extends Command
 
         $path = sprintf("%s/%s", $sites_dir, $domain);
         $port = '22';
-        $code_deployments = true;
-        $restart_fpm = true;
-        $free_bsd = false;
+        $code_deployments = 'Yes';
+        $restart_fpm = 'Yes';
+        $free_bsd = 'No';
 
         $headers = ['Label', 'Value'];
         $data = [
