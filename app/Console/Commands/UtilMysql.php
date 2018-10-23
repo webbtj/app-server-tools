@@ -112,9 +112,3 @@ class UtilMysql extends Command
         }
     }
 }
-
-/*
-DB_DATABASE=cm_hp_connector
-DB_USERNAME=cm_hp_connector
-DB_PASSWORD=cm_hp_connector
-*/
