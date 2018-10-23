@@ -38,13 +38,15 @@ class InitTools extends Command
      */
     public function handle()
     {
-        if(file_exists(".env")){
+        $wd = getcwd();
+
+        if(file_exists("$wd/.env")){
             echo ".env file already exists. Skipping...\n";
             exit;
         }
 
-        $template = file_get_contents('templates/.env');
-        $process = new Process(sprintf('echo "%s" > .env', addslashes($template)));
+        $template = file_get_contents("$wd/templates/.env");
+        $process = new Process(sprintf('echo "%s" > %s/.env', addslashes($template), $wd));
         $process->run();
         if($process->isSuccessful()){
             echo ".env file created successfully\n";
