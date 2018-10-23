@@ -76,9 +76,11 @@ class CreateSite extends Command
         $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $file_name));
         $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $file_name, $conf_dir, $file_name));
 
-        $template = file_get_contents($wd . '/templates/index.html');
-        $template = str_replace('[[name]]', $primary_domain, $template);
-        $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $dir, $primary_domain));
+        if($this->option('bare')){
+            $template = file_get_contents($wd . '/templates/index.html');
+            $template = str_replace('[[name]]', $primary_domain, $template);
+            $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $dir, $primary_domain));
+        }
 
         $this->command('sudo systemctl reload nginx');
 
