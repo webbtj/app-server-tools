@@ -109,7 +109,7 @@ class CreateSite extends Command
                 return $process->getOutput();
             }
         }else{
-            $this->error(sprintf("Command `%s` Failed!\033[0m\n", $command));
+            $this->error(sprintf("\033[1;30m\033[41mCommand `%s` Failed!\033[0m\n", $command));
         }
     }
 
