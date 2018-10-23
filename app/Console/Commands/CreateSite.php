@@ -75,7 +75,7 @@ class CreateSite extends Command
         $this->command('sudo systemctl reload nginx');
 
         $response = $this->command('sudo nginx -t', true);
-        if(!strpos($response, 'test is success')){
+        if(strpos($response, 'test is success')){
             $this->error(sprintf('nginx config test failed! Check %s/%s.', $conf_dir, $file_name));
         }
     }
