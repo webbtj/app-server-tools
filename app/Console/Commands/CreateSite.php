@@ -12,7 +12,7 @@ class CreateSite extends Command
      *
      * @var string
      */
-    protected $signature = 'cm:site {domain}';
+    protected $signature = 'cm:site {domain} {--bare}';
 
     /**
      * The console command description.
@@ -57,15 +57,22 @@ class CreateSite extends Command
         if(!$conf_dir)
             $this->error('Env Site Root "SYS_SITES_CONF" not configured! See .env file.');
 
-        if(file_exists(sprintf('%s/%s', env('SYS_SITES_ROOT'), $primary_domain))){
-            $this->error(sprintf('%s/%s already exists!', env('SYS_SITES_ROOT'), $primary_domain));
+        if(file_exists(sprintf('%s/%s', $dir, $primary_domain))){
+            $this->error(sprintf('%s/%s already exists!', $dir, $primary_domain));
         }
 
-        $this->command(sprintf('sudo mkdir %s/%s', env('SYS_SITES_ROOT'), $primary_domain));
-        $this->command(sprintf('sudo chown %s:%s %s/%s', env('SYS_USER'), env('SYS_GROUP'), env('SYS_SITES_ROOT'), $primary_domain));
+        $this->command(sprintf('sudo mkdir %s/%s', $dir, $primary_domain));
+        $this->command(sprintf('sudo chown %s:%s %s/%s', $user, $group, $dir, $primary_domain));
 
         $template = file_get_contents($wd . '/templates/nginx-site.conf');
         $template = str_replace('[[domain]]', $primary_domain, $template);
+
+        $site_root = '/current/public';
+        if($this->option('bare')){
+            $site_root = '';
+        }
+        $template = str_replace('[[site_root]]', $site_root, $template);
+
         $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $file_name));
         $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $file_name, $conf_dir, $file_name));
 
@@ -78,6 +85,13 @@ class CreateSite extends Command
         $response = $this->command('sudo nginx -t', true);
         if(strpos($response, 'test is success')){
             $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $file_name));
+        }
+
+        if(!$this->option('bare')){
+            $this->command('crontab -l > ~/.tmp.cron');
+            $this->command(sprintf('echo "* * * * * cd %s/%s/current && php artisan schedule:run >> /dev/null 2>&1" >> ~/.tmp.cron', $dir, $primary_domain));
+            $this->command('crontab ~/.tmp.cron');
+            $this->command('rm ~/.tmp.cron');
         }
     }
 
