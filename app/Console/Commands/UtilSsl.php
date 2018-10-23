@@ -55,7 +55,7 @@ class UtilSsl extends Command
             exit;
         }
 
-        $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s -d www.%s', $domain));
+        $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s -d www.%s', $domain, $domain));
         $process->run();
         if(!$process->isSuccessful()){
             echo "\033[1;30m\033[41mCould not automatically secure site.\033[0m\n";
