@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 
 class UtilMysql extends Command
 {
@@ -88,5 +89,13 @@ class UtilMysql extends Command
             $password,
             $command
         ]);
+
+        $process = new Process($command);
+        $process->run();
+        if(!$process->isSuccessful()){
+            echo "\033[1;30m\033[41mCould not create db credentials.\033[0m\n";
+        }else{
+            echo "Credentials created!\n";
+        }
     }
 }
