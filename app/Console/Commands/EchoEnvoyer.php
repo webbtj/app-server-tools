@@ -132,6 +132,7 @@ class EchoEnvoyer extends Command
             ['PHP Path', $php_path],
             ['Composer Path', $composer_path]
         ];
+        echo "\n";
         $this->table($headers, $data);
 
         if($this->option('hooks')){
