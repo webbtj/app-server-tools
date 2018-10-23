@@ -66,11 +66,11 @@ class CreateSite extends Command
 
         $template = file_get_contents($wd . '/templates/nginx-site.conf');
         $template = str_replace('[[domain]]', $primary_domain, $template);
-        $this->command(sprintf('echo "%s" | tee %s/%s > /dev/null', $template, $conf_dir, $file_name));
+        $this->command(sprintf('echo "%s" | sudo tee %s/%s > /dev/null', $template, $conf_dir, $file_name));
 
         $template = file_get_contents($wd . '/templates/index.html');
         $template = str_replace('[[name]]', $primary_domain, $template);
-        $this->command(sprintf('echo "%s" | tee %s/%s/index.html > /dev/null', $template, $dir, $file_name));
+        $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $dir, $file_name));
 
         $this->command('sudo systemctl reload nginx');
 
