@@ -93,5 +93,3 @@ class DeleteSite extends Command
         }
     }
 }
-
-$this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $domain));
