@@ -39,33 +39,32 @@ class CreateSite extends Command
     public function handle()
     {
         $wd = base_path();
-        $primary_domain = $this->argument('domain');
-        $file_name = str_replace('.', '-', $primary_domain);
+        $domain = $this->argument('domain');
         $user =  env('SYS_USER');
         $group = env('SYS_GROUP');
-        $dir = env('SYS_SITES_ROOT');
+        $sites_dir = env('SYS_SITES_ROOT');
         $conf_dir = env('SYS_SITES_CONF');
 
-        if(!$primary_domain)
+        if(!$domain)
             $this->error('Domain not provided!');
         if(!$user)
             $this->error('Env User "SYS_USER" not configured! See .env file.');
         if(!$group)
             $this->error('Env Group "SYS_GROUP" not configured! See .env file.');
-        if(!$dir)
+        if(!$sites_dir)
             $this->error('Env Site Root "SYS_SITES_ROOT" not configured! See .env file.');
         if(!$conf_dir)
             $this->error('Env Site Root "SYS_SITES_CONF" not configured! See .env file.');
 
-        if(file_exists(sprintf('%s/%s', $dir, $primary_domain))){
-            $this->error(sprintf('%s/%s already exists!', $dir, $primary_domain));
+        if(file_exists(sprintf('%s/%s', $sites_dir, $domain))){
+            $this->error(sprintf('%s/%s already exists!', $sites_dir, $domain));
         }
 
-        $this->command(sprintf('sudo mkdir %s/%s', $dir, $primary_domain));
-        $this->command(sprintf('sudo chown %s:%s %s/%s', $user, $group, $dir, $primary_domain));
+        $this->command(sprintf('sudo mkdir %s/%s', $sites_dir, $domain));
+        $this->command(sprintf('sudo chown %s:%s %s/%s', $user, $group, $sites_dir, $domain));
 
         $template = file_get_contents($wd . '/templates/nginx-site.conf');
-        $template = str_replace('[[domain]]', $primary_domain, $template);
+        $template = str_replace('[[domain]]', $domain, $template);
 
         $site_root = '/current/public';
         if($this->option('bare')){
@@ -73,25 +72,26 @@ class CreateSite extends Command
         }
         $template = str_replace('[[site_root]]', $site_root, $template);
 
-        $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $file_name));
-        $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $file_name, $conf_dir, $file_name));
+        $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $domain));
+        $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $domain, $conf_dir, $domain));
 
         if($this->option('bare')){
             $template = file_get_contents($wd . '/templates/index.html');
-            $template = str_replace('[[name]]', $primary_domain, $template);
-            $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $dir, $primary_domain));
+            $template = str_replace('[[name]]', $domain, $template);
+            $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $sites_dir, $domain));
+            $this->command(sprintf('sudo chown %s:%s %s/%s/index.html', $user, $group, $sites_dir, $domain));
         }
 
         $this->command('sudo systemctl reload nginx');
 
         $response = $this->command('sudo nginx -t', true);
         if(strpos($response, 'test is success')){
-            $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $file_name));
+            $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $domain));
         }
 
         if(!$this->option('bare')){
             $this->command('crontab -l > ~/.tmp.cron');
-            $this->command(sprintf('echo "* * * * * cd %s/%s/current && php artisan schedule:run >> /dev/null 2>&1" >> ~/.tmp.cron', $dir, $primary_domain));
+            $this->command(sprintf('echo "* * * * * cd %s/%s/current && php artisan schedule:run >> /dev/null 2>&1" >> ~/.tmp.cron', $sites_dir, $domain));
             $this->command('crontab ~/.tmp.cron');
             $this->command('rm ~/.tmp.cron');
         }
