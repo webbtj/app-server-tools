@@ -47,7 +47,7 @@ class EchoEnvoyer extends Command
         if($this->option('key')){
             $key = $this->ask("Please paste your envoyer key.");
             if($key){
-                $process = new Process(sprintf('echo "%s" >> ~/.ssh/authorized_keys', $key));
+                $process = new Process(sprintf('echo "%s" >> ~/.ssh/authorized_keys', $key . "\n"));
                 $process->run();
                 if(!$process->isSuccessful()){
                     echo "Could not get store key.\n";
@@ -109,7 +109,7 @@ class EchoEnvoyer extends Command
         $php_ver_output = trim($process->getOutput());
         $php_version = preg_replace('/^PHP\\s([0-9\\.]+)(.*[\\n\\r].*)*/', '$1', $php_ver_output);
 
-        if(strpos('7.2', $php_version) !== false){
+        if(strpos($php_version, '7.2') !== false){
             $php_version .= " (you may want to select 7.0)";
         }
 
