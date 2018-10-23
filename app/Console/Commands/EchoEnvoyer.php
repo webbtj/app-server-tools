@@ -12,7 +12,7 @@ class EchoEnvoyer extends Command
      *
      * @var string
      */
-    protected $signature = 'cm:envoyer {domain} {--key}';
+    protected $signature = 'cm:envoyer {domain} {--key} {--hooks}';
 
     /**
      * The console command description.
@@ -133,5 +133,36 @@ class EchoEnvoyer extends Command
             ['Composer Path', $composer_path]
         ];
         $this->table($headers, $data);
+
+        if($this->option('hooks')){
+            $this->hooks($user, $path);
+        }
+    }
+
+    public function $this->hooks($user, $path){
+        $hooks = [
+            [
+                'name' => 'Run Migrations',
+                'user' => $user,
+                'order' => 'After Activate New Release',
+                'script' => "cd $path/current\nphp artisan migrate"
+            ],
+            [
+                'name' => 'Link Storage',
+                'user' => $user,
+                'order' => 'After Activate New Release',
+                'script' => "cd $path/current\nphp artisan storage:link"
+            ]
+        ];
+        echo "Setup the following Envoyer hooks.\n";
+        echo "==================================\n\n";
+        foreach($hooks as $hook){
+            echo sprintf("Name: %s\n", $hook['name']);
+            echo sprintf("Run as user: %s\n", $hook['user']);
+            echo sprintf("Run %s\n", $hook['order']);
+            echo sprintf("Script\n%s\n", $hook['script']);
+            echo "==================================\n\n";
+        }
+
     }
 }
