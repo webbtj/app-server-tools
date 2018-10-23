@@ -38,7 +38,7 @@ class InitTools extends Command
      */
     public function handle()
     {
-        $wd = getcwd();
+        $wd = base_path();
 
         if(file_exists("$wd/.env")){
             echo ".env file already exists. Skipping...\n";
