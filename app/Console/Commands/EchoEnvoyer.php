@@ -139,7 +139,7 @@ class EchoEnvoyer extends Command
         }
     }
 
-    public function $this->hooks($user, $path){
+    public function hooks($user, $path){
         $hooks = [
             [
                 'name' => 'Run Migrations',
