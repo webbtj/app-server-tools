@@ -82,9 +82,6 @@ class UtilMysql extends Command
         $sql .= "GRANT ALL ON $db.* TO '$user'@'localhost' IDENTIFIED BY '$password';\n";
         $sql .= "FLUSH PRIVILEGES;\n";
 
-        // $process = new Process(sprintf('echo "%s" > ~/.sql.tmp', $sql));
-        // $process->run();
-
         $command = "mysql -u root --password='$root_pass' << END\n\n$sql\nEND";
         dump([
             $root_pass,
@@ -101,6 +98,31 @@ class UtilMysql extends Command
             echo "\033[1;30m\033[41mCould not create db credentials.\033[0m\n";
         }else{
             echo "Credentials created!\n";
+
+            if(!file_exists(sprintf('%s/%s/.env', $sites_dir, $domain))){
+                $process = new Process(sprintf('touch %s/%s/.env', $sites_dir, $domain));
+                $process->run();
+            }
+            $env = file_get_contents(sprintf('%s/%s/.env', $sites_dir, $domain));
+            $env = str_replace('DB_DATABASE', '#DB_DATABASE', $env);
+            $env = str_replace('DB_USERNAME', '#DB_USERNAME', $env);
+            $env = str_replace('DB_PASSWORD', '#DB_PASSWORD', $env);
+            $new_env = "\n##Added by Appserv\n";
+            $new_env .= "DB_DATABASE=\"$db\"\n";
+            $new_env .= "DB_USERNAME=\"$user\"\n";
+            $new_env .= "DB_PASSWORD=\"$password\"\n";
+            $env .= $new_env;
+            if(file_put_contents(sprintf('%s/%s/.env', $sites_dir, $domain), $env)){
+                echo "I also updated the .env file!\n";
+            }else{
+                echo "I couldn't update the .env file, you'll need to add the following yourself.\n$new_env";
+            }
         }
     }
 }
+
+/*
+DB_DATABASE=cm_hp_connector
+DB_USERNAME=cm_hp_connector
+DB_PASSWORD=cm_hp_connector
+*/
