@@ -83,14 +83,6 @@ class UtilMysql extends Command
         $sql .= "FLUSH PRIVILEGES;\n";
 
         $command = "mysql -u root --password='$root_pass' << END\n\n$sql\nEND";
-        dump([
-            $root_pass,
-            $auto_creds,
-            $db,
-            $user,
-            $password,
-            $command
-        ]);
 
         $process = new Process($command);
         $process->run();
