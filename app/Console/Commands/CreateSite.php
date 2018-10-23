@@ -38,6 +38,7 @@ class CreateSite extends Command
      */
     public function handle()
     {
+        $wd = base_path();
         $primary_domain = $this->argument('domain');
         $file_name = str_replace('.', '-', $primary_domain);
         $user =  env('SYS_USER');
@@ -63,10 +64,14 @@ class CreateSite extends Command
         $this->command(sprintf('sudo mkdir %s/%s', env('SYS_SITES_ROOT'), $primary_domain));
         $this->command(sprintf('sudo chown %s:%s %s/%s', env('SYS_USER'), env('SYS_GROUP'), env('SYS_SITES_ROOT'), $primary_domain));
 
-        $template = file_get_contents('templates/nginx-site.conf');
+        $template = file_get_contents($wd . '/templates/nginx-site.conf');
         $template = str_replace('[[domain]]', $primary_domain, $template);
-
         $this->command(sprintf('sudo echo "%s" > %s/%s', $template, $conf_dir, $file_name));
+
+        $template = file_get_contents($wd . '/templates/index.html');
+        $template = str_replace('[[name]]', $primary_domain, $template);
+        $this->command(sprintf('sudo echo "%s" > %s/%s/index.html', $template, $dir, $file_name));
+
         $this->command('sudo systemctl reload nginx');
 
         $response = $this->command('sudo nginx -t', true);
