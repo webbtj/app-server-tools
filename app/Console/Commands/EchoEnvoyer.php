@@ -138,6 +138,8 @@ class EchoEnvoyer extends Command
         if($this->option('hooks')){
             $this->hooks($user, $path);
         }
+
+        echo "\033[1;30m\033[41mHEY! Don't forget to setup you .env file through Envoyer\033[0m\n";
     }
 
     public function hooks($user, $path){
