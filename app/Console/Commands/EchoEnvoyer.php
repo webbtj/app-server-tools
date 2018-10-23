@@ -12,7 +12,7 @@ class EchoEnvoyer extends Command
      *
      * @var string
      */
-    protected $signature = 'cm:envoyer {domain}';
+    protected $signature = 'cm:envoyer {domain} {--key}';
 
     /**
      * The console command description.
@@ -42,6 +42,19 @@ class EchoEnvoyer extends Command
         if(!$domain){
             echo "Could not get Domain.\n";
             exit;
+        }
+
+        if($this->option('key')){
+            $key = $this->ask("Please paste your envoyer key.");
+            if($key){
+                $process = new Process(sprintf('echo "%s" >> ~/.ssh/authorized_keys', $key));
+                $process->run();
+                if(!$process->isSuccessful()){
+                    echo "Could not get store key.\n";
+                    exit;
+                }
+                echo "Key added successfully.\n";
+            }
         }
 
         $sites_dir = env('SYS_SITES_ROOT');
@@ -96,13 +109,17 @@ class EchoEnvoyer extends Command
         $php_ver_output = trim($process->getOutput());
         $php_version = preg_replace('/^PHP\\s([0-9\\.]+)(.*[\\n\\r].*)*/', '$1', $php_ver_output);
 
+        if(strpos('7.2', $php_version) !== false){
+            $php_version .= " (you may want to select 7.0)";
+        }
+
         $path = sprintf("%s/%s", $sites_dir, $domain);
         $port = '22';
         $code_deployments = 'Yes';
         $restart_fpm = 'Yes';
         $free_bsd = 'No';
 
-        $headers = ['Label', 'Value'];
+        $headers = ['Config', 'Value'];
         $data = [
             ['IP Address', $ip],
             ['Port', $port],
