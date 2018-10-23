@@ -55,6 +55,8 @@ class UtilSsl extends Command
             exit;
         }
 
+        echo "Starting, please wait. This may take a few moments...\n";
+
         $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s -d www.%s', $domain, $domain));
         $process->run();
         if(!$process->isSuccessful()){
