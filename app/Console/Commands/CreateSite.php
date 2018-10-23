@@ -66,7 +66,8 @@ class CreateSite extends Command
 
         $template = file_get_contents($wd . '/templates/nginx-site.conf');
         $template = str_replace('[[domain]]', $primary_domain, $template);
-        $this->command(sprintf('echo "%s" | sudo tee %s/%s > /dev/null', $template, $conf_dir, $file_name));
+        $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $file_name));
+        $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $file_name, $conf_dir, $file_name));
 
         $template = file_get_contents($wd . '/templates/index.html');
         $template = str_replace('[[name]]', $primary_domain, $template);
@@ -76,7 +77,7 @@ class CreateSite extends Command
 
         $response = $this->command('sudo nginx -t', true);
         if(strpos($response, 'test is success')){
-            $this->error(sprintf('nginx config test failed! Check %s/%s.', $conf_dir, $file_name));
+            $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $file_name));
         }
     }
 
