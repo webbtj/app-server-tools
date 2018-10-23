@@ -154,13 +154,13 @@ class EchoEnvoyer extends Command
                 'script' => "cd $path/current\nphp artisan storage:link"
             ]
         ];
-        echo "Setup the following Envoyer hooks.\n";
+        echo "\nSetup the following Envoyer hooks.\n";
         echo "==================================\n\n";
         foreach($hooks as $hook){
             echo sprintf("Name: %s\n", $hook['name']);
             echo sprintf("Run as user: %s\n", $hook['user']);
             echo sprintf("Run %s\n", $hook['order']);
-            echo sprintf("Script\n%s\n", $hook['script']);
+            echo sprintf("Script\n%s\n\n\n", $hook['script']);
             echo "==================================\n\n";
         }
 
