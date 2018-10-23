@@ -76,11 +76,16 @@ class UtilMysql extends Command
             $password = $this->secret("What is the new password?");
         }
 
+
+
         $sql = "CREATE DATABASE $db DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n";
         $sql .= "GRANT ALL ON $db.* TO '$user'@'localhost' IDENTIFIED BY '$password';\n";
         $sql .= "FLUSH PRIVILEGES;\n";
 
-        $command = "mysql -u --password='$root_pass' << END\n\n$sql\nEND";
+        // $process = new Process(sprintf('echo "%s" > ~/.sql.tmp', $sql));
+        // $process->run();
+
+        $command = "mysql -u root --password='$root_pass' << END\n\n$sql\nEND";
         dump([
             $root_pass,
             $auto_creds,
