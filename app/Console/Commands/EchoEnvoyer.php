@@ -160,7 +160,7 @@ class EchoEnvoyer extends Command
             echo sprintf("Name: %s\n", $hook['name']);
             echo sprintf("Run as user: %s\n", $hook['user']);
             echo sprintf("Run %s\n", $hook['order']);
-            echo sprintf("SCRIPT:\n%s\n\n\n", $hook['script']);
+            echo sprintf("SCRIPT:\n\n%s\n\n\n", $hook['script']);
             echo "==================================\n\n";
         }
 
