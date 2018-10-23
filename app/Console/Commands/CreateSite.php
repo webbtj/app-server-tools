@@ -70,7 +70,7 @@ class CreateSite extends Command
 
         $template = file_get_contents($wd . '/templates/index.html');
         $template = str_replace('[[name]]', $primary_domain, $template);
-        $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $dir, $file_name));
+        $this->command(sprintf('echo "%s" | sudo tee %s/%s/index.html > /dev/null', $template, $primary_domain, $file_name));
 
         $this->command('sudo systemctl reload nginx');
 
