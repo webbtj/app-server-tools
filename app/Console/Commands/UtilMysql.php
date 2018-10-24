@@ -149,7 +149,7 @@ class UtilMysql extends Command
             echo "Could not get internal IP.\n";
             exit;
         }
-        return = trim($process->getOutput());
+        return trim($process->getOutput());
     }
 
     public function generate_random_string($len = 18) {
