@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use App\Console\Commands\CmBase;
 
-class GetHelp extends Command
+class GetHelp extends CmBase
 {
     /**
      * The name and signature of the console command.

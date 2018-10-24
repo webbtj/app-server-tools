@@ -19,7 +19,7 @@ class DeleteSite extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Delete a site';
 
     /**
      * Create a new command instance.
