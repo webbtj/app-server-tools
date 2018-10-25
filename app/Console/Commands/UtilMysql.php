@@ -161,7 +161,7 @@ class UtilMysql extends Command
                     $success = true;
                 }else{
                     echo "\033[1;30m\033[41mSomething isn't right...\033[0m\n";
-                    echo "$connection_command\n";
+                    // echo "$connection_command\n";
                     exit;
                 }
             }
