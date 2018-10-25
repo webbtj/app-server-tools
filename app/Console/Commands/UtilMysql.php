@@ -129,7 +129,7 @@ class UtilMysql extends Command
             if($this->option('remote')){
                 echo "Testing credentials...\n";
 
-                $connection_command = "mysql -u $user -h $db_host --password='$password' $db";
+                $connection_command = "mysql -u $user -h $db_host --password='$password' -e \";\" $db";
                 $test_process = new Process($connection_command);
                 $test_process->run();
                 if($test_process->isSuccessful()){
@@ -139,7 +139,7 @@ class UtilMysql extends Command
                 }
                 echo $test_process->getOutput() . "\n";
 
-                $connection_command = "mysql -u $user -h $db_host --password='$password' x$db";
+                $connection_command = "mysql -u $user -h $db_host --password='$password' -e \";\" x$db";
                 $test_process = new Process($connection_command);
                 $test_process->run();
                 if($test_process->isSuccessful()){
