@@ -113,7 +113,7 @@ class UtilMysql extends Command
             $sql .= "GRANT ALL ON $db.* TO '$user'@'$remote_host' IDENTIFIED BY '$password'; ";
             $sql .= "FLUSH PRIVILEGES; ";
 
-            $command = "mysql -u root --password='$root_pass' << $sql";
+            $command = "mysql -u root --password='$root_pass' << '$sql'";
         }
 
         $process = new Process($command);
