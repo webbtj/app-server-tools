@@ -134,8 +134,8 @@ class UtilMysql extends Command
                     echo "Success!\n";
                     // mysqli_close($connection);
                     echo "Here, try for yourself...\n";
-                    echo "\tmysql -u $user -h $db_host $db\n";
-                    echo "When prompted for a password enter: $password\n";
+                    echo "\tmysql -u $user -h $db_host --password='$password' $db\n";
+                    // echo "When prompted for a password enter: $password\n";
                     $success = true;
                 }else{
                     echo "\033[1;30m\033[41mSomething isn't right...\033[0m\n";
