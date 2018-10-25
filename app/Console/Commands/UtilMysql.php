@@ -125,45 +125,49 @@ class UtilMysql extends Command
         $success = true;
         if(!$process->isSuccessful()){
             $success = false;
+        }else{
+            if($this->option('remote')){
+                echo "Testing credentials...\n";
+                $connection = mysqli_connect($db_host,$user,$password,$db);
+                if($connection){
+                    echo "Success!\n";
+                    mysqli_close($connection);
+                    echo "Here, try for yourself...\n";
+                    echo "\tmysql -u $user -h $db_host $db\n";
+                    echo "When prompted for a password enter: $password\n";
+                    $success = true;
+                }else{
+                    echo "\033[1;30m\033[41mSomething isn't right...\033[0m\n";
+                    exit;
+                }
+            }
         }
 
         if(!$success){
             echo "\033[1;30m\033[41mCould not create db credentials.\033[0m\n";
         }else{
             echo "Credentials created!\n";
-            // echo "Testing credentials...\n";
-            // $connection = mysqli_connect($db_host,$user,$password,$db);
-            $connection = true;
-            if($connection){
-                echo "Success!\n";
-                echo "Here, try for yourself...\n";
-                echo "\tmysql -u $user -h $db_host $db\n";
-                echo "When prompted for a password enter: $password\n";
-                mysqli_close($connection);
-                if($env_path){
-                    if(!file_exists($env_path)){
-                        $process = new Process(sprintf('touch %s', $env_path));
-                        $process->run();
-                    }
-                    $env = file_get_contents($env_path);
-                    $env = str_replace('DB_DATABASE', '#DB_DATABASE', $env);
-                    $env = str_replace('DB_USERNAME', '#DB_USERNAME', $env);
-                    $env = str_replace('DB_PASSWORD', '#DB_PASSWORD', $env);
-                    $env = str_replace('DB_HOST', '#DB_HOST', $env);
-                    $new_env = "\n##Added by Appserv\n";
-                    $new_env .= "DB_DATABASE=\"$db\"\n";
-                    $new_env .= "DB_USERNAME=\"$user\"\n";
-                    $new_env .= "DB_PASSWORD=\"$password\"\n";
-                    $new_env .= "DB_HOST=\"$db_host\"\n";
-                    $env .= $new_env;
-                    if(file_put_contents($env_path, $env)){
-                        echo "I also updated the .env file!\n";
-                    }else{
-                        echo "I couldn't update the .env file, you'll need to add the following yourself.\n$new_env";
-                    }
+            if($env_path){
+                if(!file_exists($env_path)){
+                    $process = new Process(sprintf('touch %s', $env_path));
+                    $process->run();
                 }
-            }else{
-                echo "\033[1;30m\033[41mSomething isn't right...\033[0m\n";
+                $env = file_get_contents($env_path);
+                $env = str_replace('DB_DATABASE', '#DB_DATABASE', $env);
+                $env = str_replace('DB_USERNAME', '#DB_USERNAME', $env);
+                $env = str_replace('DB_PASSWORD', '#DB_PASSWORD', $env);
+                $env = str_replace('DB_HOST', '#DB_HOST', $env);
+                $new_env = "\n##Added by Appserv\n";
+                $new_env .= "DB_DATABASE=\"$db\"\n";
+                $new_env .= "DB_USERNAME=\"$user\"\n";
+                $new_env .= "DB_PASSWORD=\"$password\"\n";
+                $new_env .= "DB_HOST=\"$db_host\"\n";
+                $env .= $new_env;
+                if(file_put_contents($env_path, $env)){
+                    echo "I also updated the .env file!\n";
+                }else{
+                    echo "I couldn't update the .env file, you'll need to add the following yourself.\n$new_env";
+                }
             }
         }
     }
