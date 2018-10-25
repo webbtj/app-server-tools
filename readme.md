@@ -24,6 +24,9 @@ prompted for your user's password. Your user should be in the sudoers group.
 * readme updates
 * general cleanup and refactoring
 * normalize name ("Appserv", "App Server Tools", "Appserv Tools")
+* DO Integration (spin up new app, worker, db servers)
+* Automate the above
+* UI for master management, notifications, reports, etc. etc. etc.
 
 ## Commands
 --todo--
