@@ -124,6 +124,7 @@ class UtilMysql extends Command
         if(!$process->isSuccessful()){
             echo "\033[1;30m\033[41mCould not create db credentials.\033[0m\n";
         }else{
+            echo $process->getOutput() . "\n";
             echo "Credentials created!\n";
 
             if($env_path){
@@ -160,7 +161,7 @@ class UtilMysql extends Command
     }
 
     public function generate_random_string($len = 18) {
-        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-=_+';
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]{}@#$%^&*()-=_+';
         $char_len = strlen($chars);
         $str = '';
         for ($i = 0; $i < $len; $i++) {
