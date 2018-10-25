@@ -207,7 +207,7 @@ class UtilMysql extends Command
     }
 
     public function generate_random_string($len = 18) {
-        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]{}@#$%^&*()-=_+';
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]{}@#%^&*()-=_+';
         $char_len = strlen($chars);
         $str = '';
         for ($i = 0; $i < $len; $i++) {
