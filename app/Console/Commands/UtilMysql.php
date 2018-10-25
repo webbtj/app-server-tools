@@ -98,7 +98,7 @@ class UtilMysql extends Command
             $process->run();
 
             echo $command . "\n";
-            
+
             if(!$process->isSuccessful()){
                 echo "Could not make remote connection.\n";
                 echo $process->getOutput() . "\n";
@@ -109,11 +109,11 @@ class UtilMysql extends Command
             $remote_host = $this->option('remoteip');
             $remote_host = $remote_host ? $remote_host : 'localhost';
             $root_pass = env('MYSQL_ROOT_PASS');
-            $sql = "CREATE DATABASE $db DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\n";
-            $sql .= "GRANT ALL ON $db.* TO '$user'@'$remote_host' IDENTIFIED BY '$password';\n";
-            $sql .= "FLUSH PRIVILEGES;\n";
+            $sql = "CREATE DATABASE $db DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci; ";
+            $sql .= "GRANT ALL ON $db.* TO '$user'@'$remote_host' IDENTIFIED BY '$password'; ";
+            $sql .= "FLUSH PRIVILEGES; ";
 
-            $command = "mysql -u root --password='$root_pass' << END\n\n$sql\nEND";
+            $command = "mysql -u root --password='$root_pass' << $sql";
         }
 
         $process = new Process($command);
