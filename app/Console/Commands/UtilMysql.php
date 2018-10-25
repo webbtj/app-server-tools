@@ -39,6 +39,7 @@ class UtilMysql extends Command
     public function handle()
     {
         //appserv mysql box4.codeandmortar.com --remote
+        $db_host = null;
         if($this->option('remote')){
             $domain = $this->argument('domain');
             if(!$domain){
@@ -97,13 +98,12 @@ class UtilMysql extends Command
             $process = new Process($command);
             $process->run();
 
-            echo $command . "\n";
-
             if(!$process->isSuccessful()){
                 echo "Could not make remote connection.\n";
-                echo $process->getOutput() . "\n";
                 exit;
             }
+
+            $db_host = $server_ip;
 
         }else{
             $remote_host = $this->option('remoteip');
@@ -114,38 +114,51 @@ class UtilMysql extends Command
             $sql .= "FLUSH PRIVILEGES; ";
 
             $command = "mysql -u root --password='$root_pass' --execute=\"$sql\"";
+
+            $db_host = $remote_host;
         }
 
         $process = new Process($command);
         $process->run();
 
-        echo $command . "\n";
-
+        $success = true;
         if(!$process->isSuccessful()){
+            $success = false;
+        }
+
+        if(!$success){
             echo "\033[1;30m\033[41mCould not create db credentials.\033[0m\n";
         }else{
-            echo $process->getOutput() . "\n";
             echo "Credentials created!\n";
-
-            if($env_path){
-                if(!file_exists($env_path)){
-                    $process = new Process(sprintf('touch %s', $env_path));
-                    $process->run();
+            echo "Testing credentials...\n";
+            $connection = mysqli_connect($db_host,$user,$password,$db);
+            if($connection){
+                echo "Success!\n";
+                mysqli_close($connection);
+                if($env_path){
+                    if(!file_exists($env_path)){
+                        $process = new Process(sprintf('touch %s', $env_path));
+                        $process->run();
+                    }
+                    $env = file_get_contents($env_path);
+                    $env = str_replace('DB_DATABASE', '#DB_DATABASE', $env);
+                    $env = str_replace('DB_USERNAME', '#DB_USERNAME', $env);
+                    $env = str_replace('DB_PASSWORD', '#DB_PASSWORD', $env);
+                    $env = str_replace('DB_HOST', '#DB_HOST', $env);
+                    $new_env = "\n##Added by Appserv\n";
+                    $new_env .= "DB_DATABASE=\"$db\"\n";
+                    $new_env .= "DB_USERNAME=\"$user\"\n";
+                    $new_env .= "DB_PASSWORD=\"$password\"\n";
+                    $new_env .= "DB_HOST=\"$db_host\"\n";
+                    $env .= $new_env;
+                    if(file_put_contents($env_path, $env)){
+                        echo "I also updated the .env file!\n";
+                    }else{
+                        echo "I couldn't update the .env file, you'll need to add the following yourself.\n$new_env";
+                    }
                 }
-                $env = file_get_contents($env_path);
-                $env = str_replace('DB_DATABASE', '#DB_DATABASE', $env);
-                $env = str_replace('DB_USERNAME', '#DB_USERNAME', $env);
-                $env = str_replace('DB_PASSWORD', '#DB_PASSWORD', $env);
-                $new_env = "\n##Added by Appserv\n";
-                $new_env .= "DB_DATABASE=\"$db\"\n";
-                $new_env .= "DB_USERNAME=\"$user\"\n";
-                $new_env .= "DB_PASSWORD=\"$password\"\n";
-                $env .= $new_env;
-                if(file_put_contents($env_path, $env)){
-                    echo "I also updated the .env file!\n";
-                }else{
-                    echo "I couldn't update the .env file, you'll need to add the following yourself.\n$new_env";
-                }
+            }else{
+                echo "\033[1;30m\033[41mSomething isn't right...\033[0m\n";
             }
         }
     }
