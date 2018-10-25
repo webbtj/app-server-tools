@@ -94,7 +94,7 @@ class UtilMysql extends Command
             }else{
                 $server_ip = $this->ask("What is the (internal) IP address of the remote server?");
                 if(file_exists($wd_env)){
-                    file_put_contents($wd_env, sprintf("REMOTE_SERVER_IP=\"%s\"\n", $server_ip));
+                    file_put_contents($wd_env, sprintf("\nREMOTE_SERVER_IP=\"%s\"\n", $server_ip), FILE_APPEND);
                 }
             }
 
@@ -103,7 +103,7 @@ class UtilMysql extends Command
             }else{
                 $ssh_user = $this->ask("What is the name SSH user that can connect to the remote server?");
                 if(file_exists($wd_env)){
-                    file_put_contents($wd_env, sprintf("REMOTE_SERVER_USER=\"%s\"\n", $ssh_user));
+                    file_put_contents($wd_env, sprintf("\nREMOTE_SERVER_USER=\"%s\"\n", $ssh_user), FILE_APPEND);
                 }
             }
 
