@@ -132,20 +132,23 @@ class UtilMysql extends Command
                 $connection_command = "mysql -u $user -h $db_host --password='$password' $db";
                 $test_process = new Process($command);
                 $test_process->run();
-                if($process->isSuccessful()){
+                if($test_process->isSuccessful()){
                     echo "Good command worked!\n";
                 }else{
                     echo "Good command failed!\n";
                 }
+                echo $test_process->getOutput() . "\n";
 
                 $connection_command = "mysql -u $user -h $db_host --password='$password' x$db";
                 $test_process = new Process($command);
                 $test_process->run();
-                if($process->isSuccessful()){
+                if($test_process->isSuccessful()){
                     echo "Bad command worked!\n";
                 }else{
                     echo "Bad command failed!\n";
                 }
+                echo $test_process->getOutput() . "\n";
+                
                 // $connection = mysqli_connect($db_host,$user,$password,$db);
                 $connection = true;
                 if($connection){
