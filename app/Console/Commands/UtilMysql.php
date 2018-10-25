@@ -90,7 +90,7 @@ class UtilMysql extends Command
             $ssh_user = $this->ask("What is the name SSH user that can connect to the remote server?");
 
             $command = sprintf(
-                'ssh %s@%s "appserv mysql --db=%s --user=%s --pass=%s --remoteip=%s"',
+                'ssh %s@%s "appserv mysql --db=%s --user=%s --pass=\'%s\' --remoteip=%s"',
                 $ssh_user, $server_ip, $db, $user, $password, $this_ip
             );
 
