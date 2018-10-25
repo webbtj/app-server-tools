@@ -134,6 +134,9 @@ class UtilMysql extends Command
             $connection = mysqli_connect($db_host,$user,$password,$db);
             if($connection){
                 echo "Success!\n";
+                echo "Here, try for yourself...\n";
+                echo "\tmysql -u $user -h $db_host $db\n";
+                echo "When prompted for a password enter: $password\n";
                 mysqli_close($connection);
                 if($env_path){
                     if(!file_exists($env_path)){
