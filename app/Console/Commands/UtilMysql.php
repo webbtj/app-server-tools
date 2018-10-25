@@ -87,8 +87,25 @@ class UtilMysql extends Command
 
         if($this->option('remote')){
             $this_ip = $this->internal_ip();
-            $server_ip = $this->ask("What is the (internal) IP address of the remote server?");
-            $ssh_user = $this->ask("What is the name SSH user that can connect to the remote server?");
+            $wd_env = base_path() . '/.env';
+
+            if(env('REMOTE_SERVER_IP')){
+                $server_ip = env('REMOTE_SERVER_IP');
+            }else{
+                $server_ip = $this->ask("What is the (internal) IP address of the remote server?");
+                if(file_exists($wd_env)){
+                    file_put_contents($wd_env, sprintf("REMOTE_SERVER_IP=\"%s\"\n", $server_ip));
+                }
+            }
+
+            if(env('REMOTE_SERVER_USER')){
+                $ssh_user = env('REMOTE_SERVER_USER');
+            }else{
+                $ssh_user = $this->ask("What is the name SSH user that can connect to the remote server?");
+                if(file_exists($wd_env)){
+                    file_put_contents($wd_env, sprintf("REMOTE_SERVER_USER=\"%s\"\n", $ssh_user));
+                }
+            }
 
             $command = sprintf(
                 'ssh %s@%s "appserv mysql --db=%s --user=%s --pass=\'%s\' --remoteip=%s"',
