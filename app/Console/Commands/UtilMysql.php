@@ -128,35 +128,19 @@ class UtilMysql extends Command
         }else{
             if($this->option('remote')){
                 echo "Testing credentials...\n";
+                $connection = false;
 
                 $connection_command = "mysql -u $user -h $db_host --password='$password' -e \";\" $db";
                 $test_process = new Process($connection_command);
                 $test_process->run();
                 if($test_process->isSuccessful()){
-                    echo "Good command worked!\n";
-                }else{
-                    echo "Good command failed!\n";
+                    $connection = true;
                 }
-                echo $test_process->getOutput() . "\n";
 
-                $connection_command = "mysql -u $user -h $db_host --password='$password' -e \";\" x$db";
-                $test_process = new Process($connection_command);
-                $test_process->run();
-                if($test_process->isSuccessful()){
-                    echo "Bad command worked!\n";
-                }else{
-                    echo "Bad command failed!\n";
-                }
-                echo $test_process->getOutput() . "\n";
-
-                // $connection = mysqli_connect($db_host,$user,$password,$db);
-                $connection = true;
                 if($connection){
                     echo "Success!\n";
-                    // mysqli_close($connection);
                     echo "Here, try for yourself...\n";
                     echo "\tmysql -u $user -h $db_host --password='$password' $db\n";
-                    // echo "When prompted for a password enter: $password\n";
                     $success = true;
                 }else{
                     echo "\033[1;30m\033[41mSomething isn't right...\033[0m\n";
