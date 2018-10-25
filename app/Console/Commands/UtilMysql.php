@@ -96,9 +96,11 @@ class UtilMysql extends Command
 
             $process = new Process($command);
             $process->run();
+
+            echo $command . "\n";
+            
             if(!$process->isSuccessful()){
                 echo "Could not make remote connection.\n";
-                echo $command . "\n";
                 echo $process->getOutput() . "\n";
                 exit;
             }
@@ -116,9 +118,11 @@ class UtilMysql extends Command
 
         $process = new Process($command);
         $process->run();
+
+        echo $command . "\n";
+
         if(!$process->isSuccessful()){
             echo "\033[1;30m\033[41mCould not create db credentials.\033[0m\n";
-            echo $command . "\n";
         }else{
             echo "Credentials created!\n";
 
