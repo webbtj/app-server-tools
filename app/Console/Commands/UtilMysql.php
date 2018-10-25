@@ -98,6 +98,7 @@ class UtilMysql extends Command
             $process->run();
             if(!$process->isSuccessful()){
                 echo "Could not make remote connection.\n";
+                echo $command . "\n";
                 echo $process->getOutput() . "\n";
                 exit;
             }
