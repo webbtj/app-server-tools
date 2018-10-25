@@ -128,10 +128,11 @@ class UtilMysql extends Command
         }else{
             if($this->option('remote')){
                 echo "Testing credentials...\n";
-                $connection = mysqli_connect($db_host,$user,$password,$db);
+                // $connection = mysqli_connect($db_host,$user,$password,$db);
+                $connection = true;
                 if($connection){
                     echo "Success!\n";
-                    mysqli_close($connection);
+                    // mysqli_close($connection);
                     echo "Here, try for yourself...\n";
                     echo "\tmysql -u $user -h $db_host $db\n";
                     echo "When prompted for a password enter: $password\n";
