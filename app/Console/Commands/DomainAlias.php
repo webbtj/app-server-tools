@@ -77,13 +77,27 @@ class DomainAlias extends Command
         $template = file_get_contents($wd . '/templates/nginx-site.conf');
         $template = str_replace('[[domain]]', $alias, $template);
 
-        $site_root = '/current/public';
+        $root_dir = null;
+        $primary_conf = file(sprintf('%s/sites-available/%s', $conf_dir, $domain), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach($primary_conf as $line){
+            $line = trim($line);
+            if(strpos($line, 'root ') === 0){
+                $line = str_replace('root ', '', $line);
+                $line = str_replace(';', '', $line);
+                $root_dir = trim($line);
+            }
+        }
+
+        /*$site_root = '/current/public';
         if($this->option('bare')){
             $site_root = '';
         }
         $template = str_replace('[[site_root]]', $site_root, $template);
 
-        $root_dir = sprintf('%s/%s%s', $sites_dir, $domain, $site_root);
+        $root_dir = sprintf('%s/%s%s', $sites_dir, $domain, $site_root);*/
+        if(!$root_dir){
+            $this->error('Couldn\'t determine the root directory of the primary domain.');
+        }
         $template = str_replace('[[root_dir]]', $root_dir, $template);
 
         $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $alias));
