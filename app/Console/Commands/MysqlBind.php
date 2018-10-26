@@ -49,6 +49,7 @@ class MysqlBind extends Command
         $mysql_conf = implode("\n", $mysql_conf);
 
         $this->command(sprintf('echo "%s" | sudo tee %s > /dev/null', $mysql_conf, $mysql_conf_file));
+        $this->command('sudo systemctl restart mysql');
         echo "Done.\nBy the way, the internal IP of this DB server is $ip\n";
     }
 
