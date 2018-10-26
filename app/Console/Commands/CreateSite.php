@@ -82,12 +82,12 @@ class CreateSite extends Command
             $this->command(sprintf('sudo chown %s:%s %s/%s/index.html', $user, $group, $sites_dir, $domain));
         }
 
-        $this->command('sudo systemctl reload nginx');
-
         $response = $this->command('sudo nginx -t', true);
         if(strpos($response, 'test is success')){
             $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $domain));
         }
+
+        $this->command('sudo systemctl reload nginx');
 
         if(!$this->option('bare')){
             $this->command('crontab -l > ~/.tmp.cron');

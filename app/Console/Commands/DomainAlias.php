@@ -77,8 +77,16 @@ class DomainAlias extends Command
         $new_conf_content = file_get_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias));
         $new_conf_content = str_replace($domain, $alias, $new_conf_content);
         $new_conf_content = str_replace("/var/www/$domain", "/var/www/$alias", $new_conf_content);
-        $new_conf_content = file_put_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias));
+        file_put_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias), $new_conf_content);
         $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $alias, $conf_dir, $alias));
+
+        $response = $this->command('sudo nginx -t', true);
+        if(strpos($response, 'test is success')){
+            $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $domain));
+        }
+
+        $this->command('sudo systemctl reload nginx');
+        echo "Done.\n";
     }
 
     public function command($command, $return=false){
