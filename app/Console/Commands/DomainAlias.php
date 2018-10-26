@@ -73,11 +73,14 @@ class DomainAlias extends Command
             $this->error('Alias domain nginx config already found!');
         }
 
-        $this->command(sprintf('sudo cp %s/sites-available/%s %s/sites-available/%s', $conf_dir, $domain, $conf_dir, $alias));
+        // $this->command(sprintf('sudo cp %s/sites-available/%s %s/sites-available/%s', $conf_dir, $domain, $conf_dir, $alias));
         $new_conf_content = file_get_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias));
         $new_conf_content = str_replace($domain, $alias, $new_conf_content);
         $new_conf_content = str_replace("/var/www/$domain", "/var/www/$alias", $new_conf_content);
         file_put_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias), $new_conf_content);
+
+        $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $new_conf_content, $conf_dir, $alias));
+
         $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $alias, $conf_dir, $alias));
 
         $response = $this->command('sudo nginx -t', true);
