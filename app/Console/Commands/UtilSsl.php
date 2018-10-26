@@ -12,7 +12,7 @@ class UtilSsl extends Command
      *
      * @var string
      */
-    protected $signature = 'cm:ssl {domain}';
+    protected $signature = 'cm:ssl {domain} {--aliasof=}';
 
     /**
      * The console command description.
@@ -50,16 +50,24 @@ class UtilSsl extends Command
             exit;
         }
 
-        if(!file_exists(sprintf('%s/%s', $sites_dir, $domain))){
-            if($this->confirm(sprintf("I couldn't find %s. Is this an alias of another domain?", $domain))){
-                $original_domain = $this->ask("What domain is this an alias of?");
-                if(!file_exists(sprintf('%s/%s', $sites_dir, $original_domain))){
-                    echo sprintf("I couldn't find %s either. Aborting.\n", $original_domain);
-                }
-            }else{
-                echo sprintf("Domain not yet installed.\n Run `appserv site %s` first.\n", $domain);
+        if($this->option('aliasof')){
+            if(!file_exists(sprintf('%s/%s', $sites_dir, $this->option('aliasof')))){
+                echo sprintf("I couldn't find %s. Aborting.\n", $this->option('aliasof'));
+                exit;
             }
-            //exit;
+        }else{
+            if(!file_exists(sprintf('%s/%s', $sites_dir, $domain))){
+                if($this->confirm(sprintf("I couldn't find %s. Is this an alias of another domain?", $domain))){
+                    $original_domain = $this->ask("What domain is this an alias of?");
+                    if(!file_exists(sprintf('%s/%s', $sites_dir, $original_domain))){
+                        echo sprintf("I couldn't find %s either. Aborting.\n", $original_domain);
+                        exit;
+                    }
+                }else{
+                    echo sprintf("Domain not yet installed.\n Run `appserv site %s` first.\n", $domain);
+                    exit;
+                }
+            }
         }
 
         echo "Starting, please wait. This may take a few moments...\n";
