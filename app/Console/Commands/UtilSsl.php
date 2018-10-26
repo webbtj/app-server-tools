@@ -51,7 +51,7 @@ class UtilSsl extends Command
         }
 
         if(!file_exists(sprintf('%s/%s', $sites_dir, $domain))){
-            if($this->choice(sprintf("I couldn't find %s. Is this an alias of another domain?", $domain))){
+            if($this->confirm(sprintf("I couldn't find %s. Is this an alias of another domain?", $domain))){
                 $original_domain = $this->ask("What domain is this an alias of?");
                 if(!file_exists(sprintf('%s/%s', $sites_dir, $original_domain))){
                     echo sprintf("I couldn't find %s either. Aborting.\n", $original_domain);
