@@ -61,7 +61,7 @@ class DomainAlias extends Command
             $this->error('Existing app not found!');
         }
 
-        if(!file_exists(sprintf('%s/%s', $sites_dir, $alias))){
+        if(file_exists(sprintf('%s/%s', $sites_dir, $alias))){
             $this->error('Alias domain found as its own app!');
         }
 
@@ -69,7 +69,7 @@ class DomainAlias extends Command
             $this->error('Existing app nginx config already not found!');
         }
 
-        if(!file_exists(sprintf('%s/sites-available/%s', $conf_dir, $alias))){
+        if(file_exists(sprintf('%s/sites-available/%s', $conf_dir, $alias))){
             $this->error('Alias domain nginx config already found!');
         }
 
