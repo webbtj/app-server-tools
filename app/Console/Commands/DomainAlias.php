@@ -76,8 +76,8 @@ class DomainAlias extends Command
         // $this->command(sprintf('sudo cp %s/sites-available/%s %s/sites-available/%s', $conf_dir, $domain, $conf_dir, $alias));
         $new_conf_content = file_get_contents(sprintf('%s/sites-available/%s', $conf_dir, $domain));
         $new_conf_content = str_replace($domain, $alias, $new_conf_content);
-        $new_conf_content = str_replace("/var/www/$domain", "/var/www/$alias", $new_conf_content);
-        file_put_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias), $new_conf_content);
+        $new_conf_content = str_replace("/var/www/$alias", "/var/www/$domain", $new_conf_content);
+        // file_put_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias), $new_conf_content);
 
         $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $new_conf_content, $conf_dir, $alias));
 
