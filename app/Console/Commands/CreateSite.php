@@ -72,6 +72,9 @@ class CreateSite extends Command
         }
         $template = str_replace('[[site_root]]', $site_root, $template);
 
+        $root_dir = sprintf('%s/%s%s', $sites_dir, $domain, $site_root);
+        $template = str_replace('[[root_dir]]', $root_dir, $template);
+
         $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $domain));
         $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $domain, $conf_dir, $domain));
 

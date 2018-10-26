@@ -73,19 +73,26 @@ class DomainAlias extends Command
             $this->error('Alias domain nginx config already found!');
         }
 
-        // $this->command(sprintf('sudo cp %s/sites-available/%s %s/sites-available/%s', $conf_dir, $domain, $conf_dir, $alias));
-        $new_conf_content = file_get_contents(sprintf('%s/sites-available/%s', $conf_dir, $domain));
-        $new_conf_content = str_replace($domain, $alias, $new_conf_content);
-        $new_conf_content = str_replace("/var/www/$alias", "/var/www/$domain", $new_conf_content);
-        // file_put_contents(sprintf('%s/sites-available/%s', $conf_dir, $alias), $new_conf_content);
+        //
+        $template = file_get_contents($wd . '/templates/nginx-site.conf');
+        $template = str_replace('[[domain]]', $alias, $template);
 
-        $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $new_conf_content, $conf_dir, $alias));
+        $site_root = '/current/public';
+        if($this->option('bare')){
+            $site_root = '';
+        }
+        $template = str_replace('[[site_root]]', $site_root, $template);
 
+        $root_dir = sprintf('%s/%s%s', $sites_dir, $domain, $site_root);
+        $template = str_replace('[[root_dir]]', $root_dir, $template);
+
+        $this->command(sprintf('echo "%s" | sudo tee %s/sites-available/%s > /dev/null', $template, $conf_dir, $alias));
         $this->command(sprintf('sudo ln -s %s/sites-available/%s %s/sites-enabled/%s', $conf_dir, $alias, $conf_dir, $alias));
+        //
 
         $response = $this->command('sudo nginx -t', true);
         if(strpos($response, 'test is success')){
-            $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $domain));
+            $this->error(sprintf('nginx config test failed! Check %s/sites-available/%s.', $conf_dir, $alias));
         }
 
         $this->command('sudo systemctl reload nginx');
