@@ -12,7 +12,7 @@ class UtilSsl extends Command
      *
      * @var string
      */
-    protected $signature = 'cm:ssl {domain} {--aliasof=}';
+    protected $signature = 'cm:ssl {domain} {--aliasof=} {--no-www}';
 
     /**
      * The console command description.
@@ -72,7 +72,11 @@ class UtilSsl extends Command
 
         echo "Starting, please wait. This may take a few moments...\n";
 
-        $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s -d www.%s', $domain, $domain));
+        if($this->option('no-www')){
+            $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s', $domain, $domain));
+        }else{
+            $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s -d www.%s', $domain, $domain));
+        }
         $process->run();
         if(!$process->isSuccessful()){
             echo "\033[1;30m\033[41mCould not automatically secure site.\033[0m\n";
