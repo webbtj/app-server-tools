@@ -73,7 +73,7 @@ class UtilSsl extends Command
         echo "Starting, please wait. This may take a few moments...\n";
 
         if($this->option('no-www')){
-            $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s', $domain, $domain));
+            $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s', $domain));
         }else{
             $process = new Process(sprintf('yes 2 | sudo certbot --nginx -d %s -d www.%s', $domain, $domain));
         }
